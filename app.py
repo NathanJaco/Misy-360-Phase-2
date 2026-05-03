@@ -1,6 +1,8 @@
 import streamlit as st
 from data.data_manager import DataManager
 from ui import dashboard_ui
+from ui import inventory_ui
+
 
 st.set_page_config("Inventory Manager", layout="wide", initial_sidebar_state="expanded")
 
@@ -159,55 +161,9 @@ elif st.session_state["page"] == "owner_dashboard":
     dashboard_ui.owner_dashboard_render()
 
 elif st.session_state["page"] == "employee_dashboard":
-    col1, col2, col3 = st.columns([2, 3, 2])
+    inventory_ui.employee_dashboard_render()
 
-    with col2:
-        st.header("Employee Dashboard")
-
-    st.divider()
-
-    col1, col2 = st.columns([3, 2])
-
-    with col1:
-        with st.container(border=True):
-            st.markdown("### Inventory")
-            search_product = st.text_input("Search Product", key="search_product_txt")
-            filtered_products = []
-
-            if search_product == "":
-                for product in products:
-                    filtered_products.append(product)
-            else:
-                for product in products:
-                    if search_product.lower() in product["name"].lower():
-                        filtered_products.append(product)
-
-            if len(filtered_products) > 0:
-                st.dataframe(filtered_products, use_container_width=True)
-            else:
-                st.info("No matching products found.")
-
-        with st.container(border=True):
-            st.markdown("### Low Stock Items")
-
-            low_stock_products = []
-
-            for product in products:
-                if product["stock"] < 5:
-                    low_stock_products.append(product)
-
-            if len(low_stock_products) > 0:
-                st.dataframe(low_stock_products, use_container_width=True)
-            else:
-                st.info("No low stock items found.")
-
-    with col2:
-        with st.container(border=True):
-            st.markdown("### Logged In User")
-            if st.session_state["user"] is not None:
-                st.markdown(f"Email: {st.session_state['user']['email']}")
-                st.markdown(f"Role: {st.session_state['role']}")
-
+    
 elif st.session_state["page"] == "add_product":
     st.header("Add Product")
     st.divider()
