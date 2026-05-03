@@ -1,11 +1,17 @@
 import streamlit as st
 from data.data_manager import DataManager
+from services import user_service
 
 
 def login_render():
     users = st.session_state["users"]
 
     st.subheader("Log In")
+
+    with st.container(border=True):
+        st.markdown("### Test Accounts")
+        st.markdown("Owner: owner@test.com / 123")
+        st.markdown("Employee: employee@test.com / 123")
 
     with st.container(border=True):
         email_input = st.text_input("Email", key="email_login")
@@ -15,21 +21,14 @@ def login_render():
 
         with col1:
             if st.button("Log In", key="real_login_btn", type="primary", use_container_width=True):
-                user_found = None
-                role = None
-
-                for user in users:
-                    if user["email"] == email_input and user["password"] == password_input:
-                        user_found = user
-                        role = user["role"]
-                        break
+                user_found = user_service.validate_login(users, email_input, password_input)
 
                 if user_found:
                     st.session_state["logged_in"] = True
                     st.session_state["user"] = user_found
-                    st.session_state["role"] = role
+                    st.session_state["role"] = user_found["role"]
 
-                    if role == "Owner":
+                    if user_found["role"] == "Owner":
                         st.session_state["page"] = "owner_dashboard"
                     else:
                         st.session_state["page"] = "employee_dashboard"
@@ -58,11 +57,7 @@ def register_render():
         new_role = st.selectbox("Role", ["Owner", "Employee"], key="role_register")
 
         if st.button("Create Account", key="create_account_btn", type="primary", use_container_width=True):
-            email_exists = False
-
-            for user in users:
-                if user["email"] == new_email:
-                    email_exists = True
+            email_exists = user_service.email_exists(users, new_email)
 
             if not full_name or not new_email or not new_password:
                 st.warning("Please complete all fields")
@@ -71,14 +66,7 @@ def register_render():
                 st.error("An account with that email already exists")
 
             else:
-                users.append(
-                    {
-                        "name": full_name,
-                        "email": new_email,
-                        "password": new_password,
-                        "role": new_role
-                    }
-                )
+                user_service.register_user(users, full_name, new_email, new_password, new_role)
 
                 user_manager.save_data(users)
                 st.session_state["users"] = users
