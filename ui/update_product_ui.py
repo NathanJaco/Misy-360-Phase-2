@@ -1,0 +1,38 @@
+import streamlit as st
+from data.data_manager import DataManager
+
+
+def update_product_render():
+    products = st.session_state["products"]
+    product_manager = DataManager("products.json")
+
+    st.header("Update Product")
+    st.divider()
+
+    with st.container(border=True):
+        st.markdown("### Update Product Details")
+
+        if len(products) == 0:
+            st.info("No products available to update.")
+
+        else:
+            product_names = []
+
+            for product in products:
+                product_names.append(product["name"])
+
+            selected_product = st.selectbox("Select Product", product_names)
+            new_price = st.number_input("New Price", min_value=0.0)
+            new_stock = st.number_input("New Stock", min_value=0)
+
+            if st.button("Update", type="primary", use_container_width=True):
+                for product in products:
+                    if product["name"] == selected_product:
+                        product["price"] = new_price
+                        product["stock"] = new_stock
+
+                product_manager.save_data(products)
+                st.session_state["products"] = products
+
+                st.success(f"{selected_product} updated successfully!")
+                st.rerun()
