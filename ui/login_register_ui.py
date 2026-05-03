@@ -10,8 +10,8 @@ def login_render():
 
     with st.container(border=True):
         st.markdown("### Test Accounts")
-        st.markdown("Owner: owner@test.com / 123")
-        st.markdown("Employee: employee@test.com / 123")
+        st.markdown("Owner: owner@test.com / Password: 123")
+        st.markdown("Employee: employee@test.com / Password: 123")
 
     with st.container(border=True):
         email_input = st.text_input("Email", key="email_login")
