@@ -1,6 +1,5 @@
 import streamlit as st
-import json
-from pathlib import Path
+from data.data_manager import DataManager
 
 st.set_page_config("Inventory Manager", layout="wide", initial_sidebar_state="expanded")
 
@@ -16,19 +15,13 @@ if "role" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state["page"] = "login"
 
-users = []
-json_path_users = Path("users.json")
+user_manager = DataManager("users.json")
+product_manager = DataManager("products.json")
 
-if json_path_users.exists():
-    with open(json_path_users, "r") as f:
-        users = json.load(f)
+users = user_manager.load_data()
+products = product_manager.load_data()
 
-products = []
-json_path_products = Path("products.json")
 
-if json_path_products.exists():
-    with open(json_path_products, "r") as f:
-        products = json.load(f)
 
 with st.sidebar:
     st.markdown("### Inventory Manager")
@@ -155,8 +148,7 @@ elif st.session_state["page"] == "register":
                     }
                 )
 
-                with open(json_path_users, "w") as f:
-                    json.dump(users, f)
+                user_manager.save_data(users)
 
                 st.success("Account created!")
                 st.session_state["page"] = "login"
@@ -301,8 +293,7 @@ elif st.session_state["page"] == "add_product":
                         }
                     )
 
-                    with open(json_path_products, "w") as f:
-                        json.dump(products, f)
+                    product_manager.save_data(products)
 
                     st.success("Product saved successfully!")
                     st.rerun()
@@ -337,8 +328,7 @@ elif st.session_state["page"] == "manage_products":
 
                         products = new_list
 
-                        with open(json_path_products, "w") as f:
-                            json.dump(products, f)
+                        product_manager.save_data(products)
 
                         st.success("Product deleted successfully!")
                         st.rerun()
@@ -436,8 +426,7 @@ elif st.session_state["page"] == "update_product":
                         product["price"] = new_price
                         product["stock"] = new_stock
 
-                with open(json_path_products, "w") as f:
-                    json.dump(products, f)
+                product_manager.save_data(products)
 
                 st.success(f"{selected_product} updated successfully!")
                 st.rerun()
