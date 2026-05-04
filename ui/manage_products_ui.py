@@ -1,6 +1,6 @@
 import streamlit as st
 from data.data_manager import DataManager
-
+from services import product_service
 
 def manage_products_render():
     products = st.session_state["products"]
@@ -28,13 +28,7 @@ def manage_products_render():
 
                 with col2:
                     if st.button("Delete", key=product["name"]):
-                        new_list = []
-
-                        for item in products:
-                            if item["name"] != product["name"]:
-                                new_list.append(item)
-
-                        products = new_list
+                        products = product_service.delete_product(products, product["name"])
 
                         product_manager.save_data(products)
                         st.session_state["products"] = products

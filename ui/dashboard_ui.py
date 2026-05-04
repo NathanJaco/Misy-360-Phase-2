@@ -1,4 +1,5 @@
 import streamlit as st
+from services import product_service
 
 def owner_dashboard_render():
     products = st.session_state["products"]
@@ -13,16 +14,8 @@ def owner_dashboard_render():
     st.divider()
 
     total_products = len(products)
-
-    low_stock = []
-    for product in products:
-        if product["stock"] < 5:
-            low_stock.append(product)
-
-    categories = []
-    for product in products:
-        if product["category"] not in categories:
-            categories.append(product["category"])
+    low_stock = product_service.get_low_stock_products(products)
+    categories = product_service.get_categories(products)
 
     col1, col2 = st.columns([3, 2])
 

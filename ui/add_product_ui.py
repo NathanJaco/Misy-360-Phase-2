@@ -1,6 +1,6 @@
 import streamlit as st
 from data.data_manager import DataManager
-
+from services import product_service
 
 def add_product_render():
     products = st.session_state["products"]
@@ -21,11 +21,7 @@ def add_product_render():
             stock = st.number_input("Stock", min_value=0, step=1, key="stock_input")
 
             if st.button("Save Product", key="save_product_btn", type="primary", use_container_width=True):
-                product_exists = False
-
-                for product in products:
-                    if product["name"].lower() == product_name.lower():
-                        product_exists = True
+                product_exists = product_service.product_exists(products, product_name)
 
                 if not product_name or not category:
                     st.warning("Please complete all fields")
@@ -34,14 +30,7 @@ def add_product_render():
                     st.error("A product with that name already exists")
 
                 else:
-                    products.append(
-                        {
-                            "name": product_name,
-                            "category": category,
-                            "price": price,
-                            "stock": stock
-                        }
-                    )
+                    product_service.add_product(products, product_name, category, price, stock)
 
                     product_manager.save_data(products)
                     st.session_state["products"] = products

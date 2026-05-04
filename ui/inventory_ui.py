@@ -1,4 +1,5 @@
 import streamlit as st
+from services import product_service
 
 def employee_dashboard_render():
     products = st.session_state["products"]
@@ -19,15 +20,7 @@ def employee_dashboard_render():
             st.markdown("### Inventory")
             search_product = st.text_input("Search Product", key="search_product_txt")
 
-            filtered_products = []
-
-            if search_product == "":
-                for product in products:
-                    filtered_products.append(product)
-            else:
-                for product in products:
-                    if search_product.lower() in product["name"].lower():
-                        filtered_products.append(product)
+            filtered_products = product_service.filter_products(products, search_product)
 
             if len(filtered_products) > 0:
                 st.dataframe(filtered_products, use_container_width=True)
@@ -37,11 +30,7 @@ def employee_dashboard_render():
         with st.container(border=True):
             st.markdown("### Low Stock Items")
 
-            low_stock_products = []
-
-            for product in products:
-                if product["stock"] < 5:
-                    low_stock_products.append(product)
+            low_stock_products = product_service.get_low_stock_products(products)
 
             if len(low_stock_products) > 0:
                 st.dataframe(low_stock_products, use_container_width=True)

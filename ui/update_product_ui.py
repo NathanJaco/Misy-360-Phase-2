@@ -1,6 +1,6 @@
 import streamlit as st
 from data.data_manager import DataManager
-
+from services import product_service
 
 def update_product_render():
     products = st.session_state["products"]
@@ -26,10 +26,7 @@ def update_product_render():
             new_stock = st.number_input("New Stock", min_value=0)
 
             if st.button("Update", type="primary", use_container_width=True):
-                for product in products:
-                    if product["name"] == selected_product:
-                        product["price"] = new_price
-                        product["stock"] = new_stock
+                product_service.update_product(products, selected_product, new_price, new_stock)
 
                 product_manager.save_data(products)
                 st.session_state["products"] = products
