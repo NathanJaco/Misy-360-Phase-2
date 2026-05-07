@@ -7,6 +7,7 @@ def manage_products_render():
     product_manager = DataManager("products.json")
 
     st.header("Manage Products")
+    st.caption("View, edit, or remove products from the inventory.")
     st.divider()
 
     with st.container(border=True):
@@ -17,7 +18,7 @@ def manage_products_render():
 
         else:
             for product in products:
-                col1, col2 = st.columns([4, 1])
+                col1, col2, col3 = st.columns([4, 1, 1])
 
                 with col1:
                     st.markdown(f"**{product['name']}**")
@@ -27,7 +28,13 @@ def manage_products_render():
                     st.divider()
 
                 with col2:
-                    if st.button("Delete", key=product["name"]):
+                    if st.button("Edit", key=f"edit_{product['name']}"):
+                        st.session_state["selected_product"] = product["name"]
+                        st.session_state["page"] = "update_product"
+                        st.rerun()
+
+                with col3:
+                    if st.button("Delete", key=f"delete_{product['name']}"):
                         products = product_service.delete_product(products, product["name"])
 
                         product_manager.save_data(products)
