@@ -44,3 +44,4 @@ def add_product_render():
 
                     st.success(f"{product_name} was saved successfully.")
                     st.info("The product has been added to the inventory list.")
+                    st.rerun()
