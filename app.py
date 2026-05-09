@@ -1,4 +1,8 @@
+import os
 import streamlit as st
+
+from dotenv import load_dotenv
+
 from data.data_manager import DataManager
 from ui import dashboard_ui
 from ui import inventory_ui
@@ -6,9 +10,14 @@ from ui import add_product_ui
 from ui import manage_products_ui
 from ui import update_product_ui
 from ui import login_register_ui
+from ui import chatbot_ui
 
 
 st.set_page_config("Inventory Manager", layout="wide", initial_sidebar_state="expanded")
+
+load_dotenv()
+
+api_key = os.getenv("OPENAI_API_KEY")
 
 if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = False
@@ -109,71 +118,4 @@ elif st.session_state["page"] == "update_product":
     update_product_ui.update_product_render()
 
 elif st.session_state["page"] == "chatbot":
-    st.header("Chatbot")
-    st.caption("Ask questions about inventory, stock, categories, or product management.")
-    st.divider()
-
-    products = st.session_state["products"]
-
-    if "messages" not in st.session_state:
-        st.session_state["messages"] = [
-            {"role": "assistant", "content": "Hi! How can I help you?"}
-        ]
-
-    for message in st.session_state["messages"]:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
-
-    user_input = st.chat_input("Ask a question...")
-
-    if user_input:
-        st.session_state["messages"].append(
-            {
-                "role": "user",
-                "content": user_input
-            }
-        )
-
-        ai_response = ""
-
-        if "low stock" in user_input.lower():
-            low_stock = []
-
-            for product in products:
-                if product["stock"] < 5:
-                    low_stock.append(product["name"])
-
-            if len(low_stock) > 0:
-                ai_response = "Low stock items: " + ", ".join(low_stock)
-            else:
-                ai_response = "All items have sufficient stock."
-
-        elif "total products" in user_input.lower():
-            ai_response = f"There are {len(products)} products in the inventory."
-
-        elif "categories" in user_input.lower():
-            categories = []
-
-            for product in products:
-                if product["category"] not in categories:
-                    categories.append(product["category"])
-
-            ai_response = "Categories: " + ", ".join(categories)
-
-        elif "help" in user_input.lower():
-            ai_response = "You can ask about low stock, total products, categories, or how to add a product."
-
-        elif "add product" in user_input.lower():
-            ai_response = "Go to the Add Product page and fill out the form to add a new item."
-
-        else:
-            ai_response = "I could not find an answer for it, try again!"
-
-        st.session_state["messages"].append(
-            {
-                "role": "assistant",
-                "content": ai_response
-            }
-        )
-
-        st.rerun()
+    chatbot_ui.chatbot_render(api_key)
