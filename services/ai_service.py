@@ -1,5 +1,6 @@
 from openai import OpenAI
-
+import json
+from pathlib import Path
 
 def build_ai_prompt(context):
     return "" \
@@ -43,3 +44,19 @@ def build_inventory_context(products):
         )
 
     return context
+
+def load_logs(filepath):
+    json_path = Path(filepath)
+
+    if json_path.exists():
+        with open(json_path, "r") as f:
+            return json.load(f)
+
+    return []
+
+
+def save_logs(filepath, logs):
+    json_path = Path(filepath)
+
+    with open(json_path, "w") as f:
+        json.dump(logs, f)

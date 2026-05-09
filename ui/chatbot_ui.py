@@ -53,6 +53,16 @@ def chatbot_render(api_key):
                 )
 
                 st.markdown(ai_response)
+                logs = ai_service.load_logs("ai_logs.json")
+
+                logs.append(
+                    {
+                        "user_message": user_input,
+                        "ai_response": ai_response
+                    }
+                )
+
+                ai_service.save_logs("ai_logs.json", logs)
 
         st.session_state["messages"].append(
             {
