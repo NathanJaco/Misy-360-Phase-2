@@ -6,10 +6,24 @@ def employee_dashboard_render():
     user = st.session_state["user"]
     role = st.session_state["role"]
 
-    col1, col2, col3 = st.columns([2, 3, 2])
+    st.header("Employee Dashboard")
+    st.caption("Search inventory and review low stock items.")
+    st.divider()
 
-    with col2:
-        st.header("Employee Dashboard")
+    total_products = len(products)
+    low_stock_products = product_service.get_low_stock_products(products)
+    categories = product_service.get_categories(products)
+
+    metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+    with metric_col1:
+        st.metric("Total Products", total_products)
+
+    with metric_col2:
+        st.metric("Low Stock Items", len(low_stock_products))
+
+    with metric_col3:
+        st.metric("Categories", len(categories))
 
     st.divider()
 
@@ -17,7 +31,7 @@ def employee_dashboard_render():
 
     with col1:
         with st.container(border=True):
-            st.markdown("### Inventory")
+            st.markdown("### Inventory Search")
             search_product = st.text_input("Search Product", key="search_product_txt")
 
             filtered_products = product_service.filter_products(products, search_product)
@@ -30,14 +44,18 @@ def employee_dashboard_render():
         with st.container(border=True):
             st.markdown("### Low Stock Items")
 
-            low_stock_products = product_service.get_low_stock_products(products)
-
             if len(low_stock_products) > 0:
                 st.dataframe(low_stock_products, use_container_width=True)
             else:
                 st.info("No low stock items found.")
 
     with col2:
+        with st.container(border=True):
+            st.markdown("### Employee Tools")
+            st.markdown("- Search current inventory")
+            st.markdown("- Review low stock items")
+            st.markdown("- Check product categories")
+
         with st.container(border=True):
             st.markdown("### Logged In User")
             if user is not None:
