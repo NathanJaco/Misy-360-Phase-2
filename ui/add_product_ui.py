@@ -33,6 +33,12 @@ def add_product_render():
                 if not product_name:
                     st.warning("Please enter a product name.")
 
+                elif price <= 0:
+                    st.warning("Price must be greater than 0.")
+
+                elif stock < 0:
+                    st.warning("Stock cannot be negative.")
+
                 elif product_exists:
                     st.error("A product with that name already exists.")
 
