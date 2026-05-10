@@ -2,26 +2,26 @@ from openai import OpenAI
 import json
 from pathlib import Path
 
-def build_ai_prompt(context):
-    return "" \
-    "You are a helpful inventory assistant for a small business inventory manager. " \
-    "Answer user questions based on the inventory context provided. " \
-    "Help users understand stock levels, categories, product updates, and inventory actions. " \
-    "Keep answers clear and useful. " \
-    f"This is my context: {context}"
+def build_prompt(context_hint: str):
+    return (
+        "You are an AI assistant in an inventory management app for a small business. "
+        "Help users with product stock, categories, prices, adding products, updating products, and deleting products. "
+        "If the user asks about prior conversation, use the chat history when possible. "
+        f"This is the context hint: {context_hint}"
+    )
 
 
-def get_ai_response(client: OpenAI, chat_history: list, context: str):
-    ai_prompt = build_ai_prompt(context)
+def get_ai_response(client: OpenAI, chat_history: list, context_hint: str):
+    prompt = build_prompt(context_hint)
 
-    ai_prompt_message = [
+    prompt_message = [
         {
             "role": "system",
-            "content": ai_prompt
+            "content": prompt
         }
     ]
 
-    messages = ai_prompt_message + chat_history
+    messages = chat_history + prompt_message
 
     ai_response = client.chat.completions.create(
         model="gpt-5-mini",
@@ -32,30 +32,17 @@ def get_ai_response(client: OpenAI, chat_history: list, context: str):
     return ai_response.choices[0].message.content
 
 
-def build_inventory_context(products):
-    context = "Current inventory products: "
-
-    for product in products:
-        context += (
-            f"{product['name']} "
-            f"category {product['category']} "
-            f"price {product['price']} "
-            f"stock {product['stock']}; "
-        )
-
-    return context
-
-def load_logs(filepath):
+def load_logs(filepath: str):
     json_path = Path(filepath)
 
     if json_path.exists():
         with open(json_path, "r") as f:
             return json.load(f)
+    else:
+        return []
 
-    return []
 
-
-def save_logs(filepath, logs):
+def save_logs(filepath: str, logs: list):
     json_path = Path(filepath)
 
     with open(json_path, "w") as f:
