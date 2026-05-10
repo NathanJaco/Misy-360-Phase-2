@@ -42,10 +42,22 @@ def chatbot_render(api_key):
 
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
+                products = st.session_state["products"]
+
+                context_hint = "Current inventory: "
+
+                for product in products:
+                    context_hint += (
+                        f"{product['name']} "
+                        f"category {product['category']} "
+                        f"price {product['price']} "
+                        f"stock {product['stock']}; "
+                    )
+
                 ai_response = ai_service.get_ai_response(
                     client=client,
                     chat_history=st.session_state["messages"],
-                    context_hint="inventory management"
+                    context_hint=context_hint
                 )
 
                 st.markdown(ai_response)
