@@ -21,6 +21,8 @@ def manage_products_render():
 
         else:
             for product in products:
+                product_id = product["id"]
+
                 col1, col2, col3 = st.columns([4, 1, 1])
 
                 with col1:
@@ -30,23 +32,24 @@ def manage_products_render():
                     st.markdown(f"Stock: {product['stock']}")
 
                 with col2:
-                    if st.button("Edit", key=f"edit_{product['name']}"):
+                    if st.button("Edit", key=f"edit_{product_id}"):
+                        st.session_state["selected_product_id"] = product_id
                         st.session_state["page"] = "update_product"
                         st.rerun()
 
                 with col3:
-                    if st.button("Delete", key=f"delete_{product['name']}"):
-                        st.session_state["confirm_delete_product"] = product["name"]
+                    if st.button("Delete", key=f"delete_{product_id}"):
+                        st.session_state["confirm_delete_product"] = product_id
                         st.rerun()
 
-                if st.session_state["confirm_delete_product"] == product["name"]:
+                if st.session_state["confirm_delete_product"] == product_id:
                     st.warning(f"Are you sure you want to delete {product['name']}?")
 
                     confirm_col1, confirm_col2 = st.columns(2)
 
                     with confirm_col1:
-                        if st.button("Confirm Delete", key=f"confirm_delete_{product['name']}", type="primary"):
-                            products = product_service.delete_product(products, product["name"])
+                        if st.button("Confirm Delete", key=f"confirm_delete_{product_id}", type="primary"):
+                            products = product_service.delete_product(products, product_id)
 
                             product_manager.save_data(products)
                             st.session_state["products"] = products
@@ -56,7 +59,7 @@ def manage_products_render():
                             st.rerun()
 
                     with confirm_col2:
-                        if st.button("Cancel", key=f"cancel_delete_{product['name']}"):
+                        if st.button("Cancel", key=f"cancel_delete_{product_id}"):
                             st.session_state["confirm_delete_product"] = None
                             st.rerun()
 

@@ -28,9 +28,10 @@ def add_product_render():
             stock = st.number_input("Stock", min_value=0, step=1, key="stock_input")
 
             if st.button("Save Product", key="save_product_btn", type="primary", use_container_width=True):
-                product_exists = product_service.product_exists(products, product_name)
+                clean_product_name = product_name.strip()
+                product_exists = product_service.product_exists(products, clean_product_name)
 
-                if not product_name:
+                if not clean_product_name:
                     st.warning("Please enter a product name.")
 
                 elif price <= 0:
@@ -43,11 +44,11 @@ def add_product_render():
                     st.error("A product with that name already exists.")
 
                 else:
-                    product_service.add_product(products, product_name, category, price, stock)
+                    product_service.add_product(products, clean_product_name, category, price, stock)
 
                     product_manager.save_data(products)
                     st.session_state["products"] = products
 
-                    st.success(f"{product_name} was saved successfully.")
+                    st.success(f"{clean_product_name} was saved successfully.")
                     st.info("The product has been added to the inventory list.")
                     st.rerun()

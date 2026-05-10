@@ -1,3 +1,6 @@
+import uuid
+
+
 def get_low_stock_products(products):
     low_stock = []
 
@@ -33,8 +36,10 @@ def filter_products(products, search_product):
 
 
 def product_exists(products, product_name):
+    clean_product_name = product_name.strip().lower()
+
     for product in products:
-        if product["name"].lower() == product_name.lower():
+        if product["name"].strip().lower() == clean_product_name:
             return True
 
     return False
@@ -42,7 +47,8 @@ def product_exists(products, product_name):
 
 def add_product(products, name, category, price, stock):
     new_product = {
-        "name": name,
+        "id": str(uuid.uuid4()),
+        "name": name.strip(),
         "category": category,
         "price": price,
         "stock": stock
@@ -53,19 +59,19 @@ def add_product(products, name, category, price, stock):
     return new_product
 
 
-def delete_product(products, product_name):
+def delete_product(products, product_id):
     new_list = []
 
     for product in products:
-        if product["name"] != product_name:
+        if product["id"] != product_id:
             new_list.append(product)
 
     return new_list
 
 
-def update_product(products, selected_product, new_price, new_stock):
+def update_product(products, product_id, new_price, new_stock):
     for product in products:
-        if product["name"] == selected_product:
+        if product["id"] == product_id:
             product["price"] = new_price
             product["stock"] = new_stock
             return product
