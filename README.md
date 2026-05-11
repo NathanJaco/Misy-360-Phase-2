@@ -47,4 +47,4 @@ OPENAI_API_KEY=your_api_key_here
 
 ## AI-Assisted Prompt Records Note
 
-You clarified that the AI-assisted prompt records section should not count against us because most of our project was already completed before AI was allowed
+You clarified that the AI-assisted prompt records section should not count against us because most of our project was mostly completed before AI was allowed
