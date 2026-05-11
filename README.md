@@ -41,4 +41,10 @@ To test the AI assistant, add an API key
 create a local `.env` file and add:
 
 ```text
+
 OPENAI_API_KEY=your_api_key_here
+```
+
+## AI-Assisted Prompt Records Note
+
+You clarified that the AI-assisted prompt records section should not count against us because most of our project was already completed before AI was allowed
