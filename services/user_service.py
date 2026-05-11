@@ -20,6 +20,7 @@ def email_exists(users, email):
 
 def register_user(users, name, email, password, role):
     new_user = {
+        "user_id": str(len(users) + 1),
         "name": name.strip(),
         "email": email.strip(),
         "password": password,
